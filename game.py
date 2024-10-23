@@ -90,9 +90,7 @@ class YatzyStateMachine:
                 case YatzyStateMachine.States.RECORD_SCORE:
                     self.current_state = self.handle_record_score_state()
                 case YatzyStateMachine.States.END_TURN:
-                    self.handle_end_turn_state()
-                    self.current_state = self.States.START
+                    self.current_state = self.handle_end_turn_state()
                 case YatzyStateMachine.States.GAME_OVER:
                     self.print_scorecard_as_table()
-                    return
-
+                    break
