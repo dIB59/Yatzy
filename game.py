@@ -16,7 +16,6 @@ class YatzyStateMachine:
 
     class States(Enum):
         START = auto()
-        PLAYER_TURN = auto()
         ROLL_DICE = auto()
         SELECT_CATEGORY = auto()
         CALCULATE_SCORE = auto()
@@ -25,24 +24,31 @@ class YatzyStateMachine:
         GAME_OVER = auto()
 
     def handle_end_turn_state(self):
+        self.print_current_state()
         # The game has ended
         # Print game over nicely
         if self.current_round == self.max_rounds:
-            self.current_state = self.States.GAME_OVER
-            return
-        current_player = self.players[self.current_round % len(self.players)]
-        print(f"End of turn for {current_player}")
-        print("Current scorecard:")
-        print(current_player)
+            return self.States.GAME_OVER
+        self.print_scorecard_as_table()
+        self.current_round += 1
+
+        return self.States.ROLL_DICE
 
     def print_scorecard_as_table(self):
         """Scorecard on the left column, player names on the top row."""
-        print("Scorecard:")
-        for player in self.players:
-            print(player.name)
-            for category, score in player.scorecard.items():
-                print(f"{category}: {score}")
-            print()
+        # Print the table header
+        header = f"{'Category':<20} " + " ".join([f"{player.name:^10}" for player in self.players])
+        print()
+        print(header)
+        print("-" * len(header))
+        # Print each category and scores for all players
+        for category in self.players[0].scorecard.keys():
+            row = f"{category:<20} " + " ".join(
+                [f"{(player.scorecard[category] if player.scorecard[category] is not None else 'None'):^10}"
+                 for player in self.players]
+            )
+            print(row)
+        print()
 
     def print_current_state(self):
         print(f"Current state: {self.current_state}")
