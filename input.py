@@ -1,6 +1,6 @@
 def get_selected_dice():
     """Get user input for dice to hold and convert to list of indices."""
-    hold_dice = _user_input("Enter dice to hold (1-5), separated by commas: ", ["1", "2", "3", "4", "5", ""])
+    hold_dice = _user_input("Enter dice to hold (1-5), separated by spaces: ", ["1", "2", "3", "4", "5", " "])
     return [int(d) - 1 for d in hold_dice.split(",") if d]
 
 
