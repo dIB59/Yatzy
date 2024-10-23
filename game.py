@@ -11,7 +11,7 @@ class YatzyStateMachine:
         self.current_state = self.States.START
         self.players = players
         self.current_round = 0
-        self.max_rounds = max_rounds
+        self.max_rounds = max_rounds * len(players)
         self.dice = [0, 0, 0, 0, 0]
 
     class States(Enum):
