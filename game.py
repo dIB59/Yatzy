@@ -58,14 +58,6 @@ def calculate_score(category: str, dice: list[int]) -> int:
             return 0
 
 
-# def score_per_category(all_category: dict[str, int], dice: list[int]) -> int:
-#     for category, score in all_category.items():
-#         if score is None:
-#             category_score = calculate_score(category, dice)
-#             category[category] = category_score
-#             return category_score
-
-
 @dataclass
 class YatzyStateMachine:
 
