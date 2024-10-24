@@ -124,7 +124,9 @@ class YatzyStateMachine:
         print(f"Player {current_player.name}'s turn")
 
         # Initial dice roll
-        self.dice = self.roll_and_display_dice()
+        self.dice = self.roll_dice()
+        self.display_dice()
+
 
         # Player decides which dice to hold
         held_dice = self.get_held_dice()
@@ -146,13 +148,11 @@ class YatzyStateMachine:
 
         return YatzyStateMachine.States.SELECT_CATEGORY
 
-    def roll_and_display_dice(self):
+    def display_dice(self):
         """Roll and sort the dice, then display the result."""
-        dice = self.roll_dice()
-        dice.sort()
-        print(f"{self.players[self.current_round % len(self.players)].name} rolled: {dice}")
+        self.dice.sort()
+        print(f"{self.players[self.current_round % len(self.players)].name} rolled: {self.dice}")
         self.print_score_for_current_roll()
-        return dice
 
     def get_held_dice(self):
         """Prompt the player to select dice to hold, returning the selected dice."""
