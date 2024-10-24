@@ -75,11 +75,15 @@ class YatzyStateMachine:
             return YatzyStateMachine.States.SELECT_CATEGORY
 
         # Allow up to re_rolls times to hold and roll dice
-        for _ in range(self.re_rolls):
+        for i in range(self.re_rolls):
+            print(i)
             self.dice = self.roll_dice(held_dice)
             self.dice.sort()
             print(f"{current_player.name} rolled: {self.dice}")
             self.print_score_for_current_roll()
+
+            if i == self.re_rolls - 1:
+                return YatzyStateMachine.States.SELECT_CATEGORY
 
             held_dice = self.get_held_dice()
 
