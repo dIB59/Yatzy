@@ -14,6 +14,11 @@ def get_num_players():
     return int(_user_input("Enter number of players: ", [str(i) for i in range(1, 11)]))
 
 
+def want_to_select_category():
+    """Asks user if they want to select a category."""
+    return _user_input("Do you want to select a category? (y/n): ", ["y", "n", "yes", "no"])
+
+
 def get_player_name():
     """Get player name for the game."""
     while True:
@@ -27,6 +32,7 @@ def _user_input(prompt: str, valid_inputs: list[str]):
     """Get user input and validate against a list of valid options."""
     while True:
         u_input = input(prompt)
+        u_input = u_input.lower()
         if u_input in valid_inputs:
             return u_input
         print("Invalid input. Please try again.")

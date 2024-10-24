@@ -99,7 +99,7 @@ class YatzyStateMachine:
         # Print each category and scores for all players
         for category in self.players[0].scorecard.keys():
             row = f"{category:<20} " + " ".join(
-                [f"{(player.scorecard[category] if player.scorecard[category] is not None else 'None'):^10}"
+                [f"{(player.scorecard[category] if player.scorecard[category] is not None else '0'):^10}"
                  for player in self.players]
             )
             print(row)
@@ -124,6 +124,9 @@ class YatzyStateMachine:
 
         self.print_score_for_current_roll()
 
+        if input.want_to_select_category().startswith("y"):
+            return YatzyStateMachine.States.SELECT_CATEGORY
+
         for i in range(self.re_rolls):
             print(f"You rolled: {self.dice}")
             hold_dice_index = input.get_selected_dice_index()
@@ -139,6 +142,10 @@ class YatzyStateMachine:
 
             self.dice = self.roll_dice(held_dice)
             self.dice.sort()
+            self.print_score_for_current_roll()
+
+            if input.want_to_select_category().startswith("y"):
+                return YatzyStateMachine.States.SELECT_CATEGORY
 
         return YatzyStateMachine.States.SELECT_CATEGORY
 
