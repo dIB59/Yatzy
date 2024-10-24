@@ -6,7 +6,7 @@ class Player:
     name: str
     # scorecard for the yatzy game
     scorecard: dict[str, int] = field(default_factory=lambda: {
-        "Aces": None,
+        "Ones": None,
         "Twos": None,
         "Threes": None,
         "Fours": None,
