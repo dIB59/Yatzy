@@ -73,8 +73,6 @@ class YatzyStateMachine:
         START = auto()
         ROLL_DICE = auto()
         SELECT_CATEGORY = auto()
-        CALCULATE_SCORE = auto()
-        RECORD_SCORE = auto()
         END_TURN = auto()
         GAME_OVER = auto()
 
@@ -122,6 +120,8 @@ class YatzyStateMachine:
         self.dice = self.roll_dice()
         self.dice.sort()
 
+        print(f"{current_player.name} rolled: {self.dice}")
+
         self.print_score_for_current_roll()
 
         if input.want_to_select_category().startswith("y"):
@@ -151,9 +151,9 @@ class YatzyStateMachine:
 
     def print_score_for_current_roll(self):
         """Prints the current player's score for all categories the current roll."""
-        current_player = self.players[self.current_round % len(self.players)]
+        current_player = self.get_current_player()
         possible_scores = {category: calculate_score(category, self.dice) for category in
-                           current_player.scorecard.keys()} # improve this stupid shit, send the dict as an argument
+                           current_player.scorecard.keys()}  # improve this stupid shit, send the dict as an argument
         # print table for the current player
         print(f"{'Category':<20} {current_player.name}'s {'possible Score':<10}")
         print("-" * (38 + len(current_player.name)))
@@ -171,20 +171,17 @@ class YatzyStateMachine:
 
     def handle_select_category_state(self):
         self.print_current_state()
-        # Get the player's choice of category
-        # ...
-        return YatzyStateMachine.States.CALCULATE_SCORE
+        chosen_category = input.get_user_category_decision()
+        current_player = self.get_current_player()
 
-    def handle_calculate_score_state(self):
-        self.print_current_state()
-        # Calculate the score based on the chosen category and dice
-        # ...
-        return YatzyStateMachine.States.RECORD_SCORE
+        score = calculate_score(chosen_category, self.dice)
 
-    def handle_record_score_state(self):
-        self.print_current_state()
+        current_player.scorecard[chosen_category] = score
 
         return YatzyStateMachine.States.END_TURN
+
+    def get_current_player(self) -> Player:
+        return self.players[self.current_round % len(self.players)]
 
     def play(self):
         while True:
@@ -195,12 +192,9 @@ class YatzyStateMachine:
                     self.current_state = self.handle_roll_dice_state()
                 case YatzyStateMachine.States.SELECT_CATEGORY:
                     self.current_state = self.handle_select_category_state()
-                case YatzyStateMachine.States.CALCULATE_SCORE:
-                    self.current_state = self.handle_calculate_score_state()
-                case YatzyStateMachine.States.RECORD_SCORE:
-                    self.current_state = self.handle_record_score_state()
                 case YatzyStateMachine.States.END_TURN:
                     self.current_state = self.handle_end_turn_state()
                 case YatzyStateMachine.States.GAME_OVER:
                     self.print_scorecard_as_table()
                     break
+

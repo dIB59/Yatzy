@@ -1,3 +1,6 @@
+from score import categories
+
+
 def get_selected_dice_index():
     """Get user input for dice to hold and convert to list of indices."""
     while True:
@@ -33,6 +36,8 @@ def _user_input(prompt: str, valid_inputs: list[str]):
     while True:
         u_input = input(prompt)
         u_input = u_input.lower()
+        valid_inputs = [i.lower() for i in valid_inputs]
+
         if u_input in valid_inputs:
             return u_input
         print("Invalid input. Please try again.")
@@ -48,3 +53,10 @@ def valid_name(name):
         return True
 
     return False
+
+
+def get_user_category_decision():
+    """Get what category the user wants to use."""
+    print("Categories: ", categories())
+    category = _user_input("Enter category: ", categories())
+    return category
