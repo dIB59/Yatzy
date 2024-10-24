@@ -71,7 +71,7 @@ class YatzyStateMachine:
         # Player decides which dice to hold
         held_dice = self.get_held_dice()
 
-        if len(held_dice) == 5:
+        if len(held_dice) == len(self.dice):
             return YatzyStateMachine.States.SELECT_CATEGORY
 
         # Allow up to re_rolls times to hold and roll dice
@@ -87,7 +87,7 @@ class YatzyStateMachine:
 
             held_dice = self.get_held_dice()
 
-            if len(held_dice) == 5:
+            if len(held_dice) == len(self.dice):
                 return YatzyStateMachine.States.SELECT_CATEGORY
 
         return YatzyStateMachine.States.SELECT_CATEGORY
