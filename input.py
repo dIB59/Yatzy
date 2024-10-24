@@ -58,5 +58,5 @@ def valid_name(name):
 def get_user_category_decision():
     """Get what category the user wants to use."""
     print("Categories: ", categories())
-    category = _user_input("Enter category: ", categories())
+    category = _user_input("Enter category: ", categories()).title()
     return category
