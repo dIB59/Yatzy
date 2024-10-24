@@ -1,7 +1,12 @@
 def get_selected_dice():
     """Get user input for dice to hold and convert to list of indices."""
-    hold_dice = _user_input("Enter dice to hold (1-5), separated by spaces: ", ["1", "2", "3", "4", "5", " "])
-    return [int(d) - 1 for d in hold_dice.split(",") if d]
+    while True:
+        user_input = input("Enter dices to hold (1-5), seperated by spaces: ")
+        choices = user_input.split()
+        valid_input = [str(i) for i in range(1, 6)]
+        if all(choice in valid_input for choice in choices):
+            return [int(choice) - 1 for choice in choices]
+        print("Invalid input. Please try again.")
 
 
 def get_num_players():
