@@ -104,13 +104,12 @@ class YatzyStateMachine:
 
     def handle_roll_dice_state(self):
         self.print_current_state()
-        current_player = self.players[self.current_round % len(self.players)]
+        current_player = self.get_current_player()
         print(f"Player {current_player.name}'s turn")
 
         # Initial dice roll
         self.dice = self.roll_dice()
         self.display_dice()
-
 
         # Player decides which dice to hold
         held_dice = self.get_held_dice()
