@@ -87,7 +87,6 @@ class YatzyStateMachine:
     def handle_end_turn_state(self):
         self.print_current_state()
         # The game has ended
-        # Print game over nicely
         if self.current_round == self.max_rounds:
             return self.States.GAME_OVER
         self.print_scorecard_as_table()
@@ -105,7 +104,7 @@ class YatzyStateMachine:
         # Print each category and scores for all players
         for category in self.players[0].scorecard.keys():
             row = f"{category:<20} " + " ".join(
-                [f"{(player.scorecard[category] if player.scorecard[category] is not None else '0'):^10}"
+                [f"{(player.scorecard[category] if player.scorecard[category] is not None else '-'):^10}"
                  for player in self.players]
             )
             print(row)
@@ -124,38 +123,55 @@ class YatzyStateMachine:
         current_player = self.players[self.current_round % len(self.players)]
         print(f"Player {current_player.name}'s turn")
 
-        # Get the player's choice of dice to hold
-        self.dice = self.roll_dice()
-        self.dice.sort()
+        # Initial dice roll
+        self.dice = self.roll_and_display_dice()
 
-        print(f"{current_player.name} rolled: {self.dice}")
+        # Player decides which dice to hold
+        held_dice = self.get_held_dice()
 
-        self.print_score_for_current_roll()
-
-        if input.want_to_select_category().startswith("y"):
+        if len(held_dice) == 5:
             return YatzyStateMachine.States.SELECT_CATEGORY
 
-        for i in range(self.re_rolls):
-            print(f"You rolled: {self.dice}")
-            hold_dice_index = input.get_selected_dice_index()
-            print(f"Selected dice to hold: {hold_dice_index} which are:", end=" ")
-            held_dice = []
-            for i in hold_dice_index:
-                print(self.dice[i], end=" ")
-                held_dice.append(self.dice[i])
-            print()
+        # Allow up to re_rolls times to hold and roll dice
+        for _ in range(self.re_rolls):
+            self.dice = self.roll_dice(held_dice)
+            self.dice.sort()
+            print(f"{current_player.name} rolled: {self.dice}")
+            self.print_score_for_current_roll()
+
+            held_dice = self.get_held_dice()
 
             if len(held_dice) == 5:
                 return YatzyStateMachine.States.SELECT_CATEGORY
 
-            self.dice = self.roll_dice(held_dice)
-            self.dice.sort()
-            self.print_score_for_current_roll()
-
-            if input.want_to_select_category().startswith("y"):
-                return YatzyStateMachine.States.SELECT_CATEGORY
-
         return YatzyStateMachine.States.SELECT_CATEGORY
+
+    def roll_and_display_dice(self):
+        """Roll and sort the dice, then display the result."""
+        dice = self.roll_dice()
+        dice.sort()
+        print(f"{self.players[self.current_round % len(self.players)].name} rolled: {dice}")
+        self.print_score_for_current_roll()
+        return dice
+
+    def get_held_dice(self):
+        """Prompt the player to select dice to hold, returning the selected dice."""
+        held_dice = []
+        hold_dice_index = input.get_selected_dice_index()
+
+        if not hold_dice_index:
+            print("No dice selected to hold.")
+        else:
+            print(f"Selected dice to hold: {hold_dice_index} which are:", end=" ")
+            for i in hold_dice_index:
+                if i < len(self.dice):  # Ensure the index is within bounds
+                    print(self.dice[i], end=" ")
+                    held_dice.append(self.dice[i])
+                else:
+                    print(f"\nInvalid dice index: {i}")
+            print()
+
+        return held_dice
 
     def print_score_for_current_roll(self):
         """Prints the current player's score for all categories the current roll."""
@@ -205,4 +221,3 @@ class YatzyStateMachine:
                 case YatzyStateMachine.States.GAME_OVER:
                     self.print_scorecard_as_table()
                     break
-
