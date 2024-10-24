@@ -1,7 +1,61 @@
+import random
 from dataclasses import dataclass
 from enum import Enum, auto
 
+import input
 from player import Player
+
+
+def calculate_score(category: str, dice: list[int]) -> int:
+    match category:
+        case "Ones":
+            return dice.count(1)
+        case "Twos":
+            return dice.count(2) * 2
+        case "Threes":
+            return dice.count(3) * 3
+        case "Fours":
+            return dice.count(4) * 4
+        case "Fives":
+            return dice.count(5) * 5
+        case "Sixes":
+            return dice.count(6) * 6
+        case "Three of a kind":
+            if any(dice.count(d) >= 3 for d in dice):
+                return sum(dice)
+            return 0
+        case "Four of a kind":
+            if any(dice.count(d) >= 4 for d in dice):
+                return sum(dice)
+            return 0
+        case "Full House":
+            if any(dice.count(d) == 3 for d in dice) and any(dice.count(d) == 2 for d in dice):
+                return 25
+            return 0
+        case "Small Straight":
+            if len(set(dice)) >= 4:
+                return 30
+            return 0
+        case "Large Straight":
+            if len(set(dice)) == 5:
+                return 40
+            return 0
+        case "Chance":
+            return sum(dice)
+        case "Yatzy":
+            if all(d == dice[0] for d in dice):
+                return 50
+            return 0
+        case _:
+            return 0
+
+
+# def score_per_category(all_category: dict[str, int], dice: list[int]) -> int:
+#     for category, score in all_category.items():
+#         if score is None:
+#             category_score = calculate_score(category, dice)
+#             category[category] = category_score
+#             return category_score
 
 
 @dataclass
@@ -13,6 +67,7 @@ class YatzyStateMachine:
         self.current_round = 0
         self.max_rounds = max_rounds * len(players)
         self.dice = [0, 0, 0, 0, 0]
+        self.re_rolls = 2
 
     class States(Enum):
         START = auto()
@@ -60,10 +115,52 @@ class YatzyStateMachine:
 
     def handle_roll_dice_state(self):
         self.print_current_state()
+        current_player = self.players[self.current_round % len(self.players)]
+        print(f"Player {current_player.name}'s turn")
 
-        # Roll the dice
-        # ...
+        # Get the player's choice of dice to hold
+        self.dice = self.roll_dice()
+        self.dice.sort()
+
+        self.print_score_for_current_roll()
+
+        for i in range(self.re_rolls):
+            print(f"You rolled: {self.dice}")
+            hold_dice_index = input.get_selected_dice_index()
+            print(f"Selected dice to hold: {hold_dice_index} which are:", end=" ")
+            held_dice = []
+            for i in hold_dice_index:
+                print(self.dice[i], end=" ")
+                held_dice.append(self.dice[i])
+            print()
+
+            if len(held_dice) == 5:
+                return YatzyStateMachine.States.SELECT_CATEGORY
+
+            self.dice = self.roll_dice(held_dice)
+            self.dice.sort()
+
         return YatzyStateMachine.States.SELECT_CATEGORY
+
+    def print_score_for_current_roll(self):
+        """Prints the current player's score for all categories the current roll."""
+        current_player = self.players[self.current_round % len(self.players)]
+        possible_scores = {category: calculate_score(category, self.dice) for category in
+                           current_player.scorecard.keys()} # improve this stupid shit, send the dict as an argument
+        # print table for the current player
+        print(f"{'Category':<20} {current_player.name}'s {'possible Score':<10}")
+        print("-" * (38 + len(current_player.name)))
+        for category, score in possible_scores.items():
+            print(f"{category:<20} {score:<10}")
+
+    def roll_dice(self, held_dice: list[int] = None):
+        new_dice = []
+        if held_dice is None:
+            held_dice = []
+        for i in range(len(self.dice) - len(held_dice)):
+            new_dice.append(random.randint(1, 6))
+        held_dice.extend(new_dice)
+        return held_dice
 
     def handle_select_category_state(self):
         self.print_current_state()
