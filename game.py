@@ -33,19 +33,11 @@ def calculate_score(category: str, dice: list[int]) -> int:
                 return 25
             return 0
         case "Small Straight":
-            if (dice.__contains__(1)
-                    and dice.__contains__(2)
-                    and dice.__contains__(3)
-                    and dice.__contains__(4)
-                    and dice.__contains__(5)):
+            if set(dice).issubset({1, 2, 3, 4, 5}):
                 return 30
             return 0
         case "Large Straight":
-            if (dice.__contains__(2)
-                    and dice.__contains__(3)
-                    and dice.__contains__(4)
-                    and dice.__contains__(5)
-                    and dice.__contains__(6)):
+            if set(dice).issubset({2, 3, 4, 5, 6}):
                 return 40
             return 0
         case "Chance":
