@@ -6,48 +6,27 @@ import input
 from player import Player
 
 
+def category_score_map() -> dict[str, callable]:
+    return {
+        "Ones": lambda dice: dice.count(1),
+        "Twos": lambda dice: dice.count(2) * 2,
+        "Threes": lambda dice: dice.count(3) * 3,
+        "Fours": lambda dice: dice.count(4) * 4,
+        "Fives": lambda dice: dice.count(5) * 5,
+        "Sixes": lambda dice: dice.count(6) * 6,
+        "Three Of A Kind": lambda dice: sum(dice) if any(dice.count(d) >= 3 for d in dice) else 0,
+        "Four Of A Kind": lambda dice: sum(dice) if any(dice.count(d) >= 4 for d in dice) else 0,
+        "Full House": lambda dice: 25 if any(dice.count(d) == 3 for d in dice) and any(
+            dice.count(d) == 2 for d in dice) else 0,
+        "Small Straight": lambda dice: 30 if {1, 2, 3, 4, 5}.issubset(set(dice)) else 0,
+        "Large Straight": lambda dice: 40 if {2, 3, 4, 5, 6}.issubset(set(dice)) else 0,
+        "Chance": lambda dice: sum(dice),
+        "Yatzy": lambda dice: 50 if all(d == dice[0] for d in dice) and dice[0] != 0 else 0
+    }
+
+
 def calculate_score(category: str, dice: list[int]) -> int:
-    match category:
-        case "Ones":
-            return dice.count(1)
-        case "Twos":
-            return dice.count(2) * 2
-        case "Threes":
-            return dice.count(3) * 3
-        case "Fours":
-            return dice.count(4) * 4
-        case "Fives":
-            return dice.count(5) * 5
-        case "Sixes":
-            return dice.count(6) * 6
-        case "Three of a kind":
-            if any(dice.count(d) >= 3 for d in dice):
-                return sum(dice)
-            return 0
-        case "Four of a kind":
-            if any(dice.count(d) >= 4 for d in dice):
-                return sum(dice)
-            return 0
-        case "Full House":
-            if any(dice.count(d) == 3 for d in dice) and any(dice.count(d) == 2 for d in dice):
-                return 25
-            return 0
-        case "Small Straight":
-            if set(dice).issubset({1, 2, 3, 4, 5}):
-                return 30
-            return 0
-        case "Large Straight":
-            if set(dice).issubset({2, 3, 4, 5, 6}):
-                return 40
-            return 0
-        case "Chance":
-            return sum(dice)
-        case "Yatzy":
-            if all(d == dice[0] for d in dice) and dice[0] != 0:
-                return 50
-            return 0
-        case _:
-            return 0
+    return category_score_map().get(category, lambda dice_rolls: 0)(dice)
 
 
 @dataclass
