@@ -1,3 +1,4 @@
+from player import Player
 from score import categories
 
 
@@ -14,12 +15,12 @@ def get_selected_dice_index():
 
 def get_num_players():
     """Get number of players for the game."""
-    return int(_user_input("Enter number of players: ", [str(i) for i in range(1, 11)]))
+    return int(validate_user_input("Enter number of players: ", [str(i) for i in range(1, 11)]))
 
 
 def want_to_select_category():
     """Asks user if they want to select a category."""
-    return _user_input("Do you want to select a category? (y/n): ", ["y", "n", "yes", "no"])
+    return validate_user_input("Do you want to select a category? (y/n): ", ["y", "n", "yes", "no"])
 
 
 def get_player_name():
@@ -31,7 +32,7 @@ def get_player_name():
         print("Invalid name. Please try again.")
 
 
-def _user_input(prompt: str, valid_inputs: list[str]):
+def validate_user_input(prompt: str, valid_inputs: list[str], error_message: str = "Invalid input. Please try again.") -> str:
     """Get user input and validate against a list of valid options."""
     while True:
         u_input = input(prompt)
@@ -40,7 +41,7 @@ def _user_input(prompt: str, valid_inputs: list[str]):
 
         if u_input in valid_inputs:
             return u_input
-        print("Invalid input. Please try again.")
+        print(error_message)
 
 
 def valid_name(name):
@@ -55,8 +56,18 @@ def valid_name(name):
     return False
 
 
-def get_user_category_decision():
-    """Get what category the user wants to use."""
-    print("Categories: ", categories())
-    category = _user_input("Enter category: ", categories()).title()
+def get_user_category_decision(player: Player):
+    """Get the category the user wants to use, only showing un-scored categories."""
+    # Get all un-scored categories
+    available_categories = [category for category in categories() if player.scorecard.get(category) is None]
+
+    if not available_categories:
+        raise ValueError("No available categories left to choose from.")
+
+    # Print available categories
+    print("Available categories: ", available_categories)
+    # Input loop: Ensure valid input from available categories
+    error_message = f"Invalid category. Please choose from: {available_categories}"
+    category = validate_user_input("Enter category: ", available_categories, error_message).title()
     return category
+
