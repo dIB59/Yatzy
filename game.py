@@ -139,8 +139,8 @@ class YatzyStateMachine:
 
     def handle_select_category_state(self):
         self.print_current_state()
-        chosen_category = input.get_user_category_decision()
         current_player = self.get_current_player()
+        chosen_category = input.get_user_category_decision(current_player)
 
         score = calculate_score(chosen_category, self.dice)
 
