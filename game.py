@@ -33,17 +33,25 @@ def calculate_score(category: str, dice: list[int]) -> int:
                 return 25
             return 0
         case "Small Straight":
-            if len(set(dice)) >= 4:
+            if (dice.__contains__(1)
+                    and dice.__contains__(2)
+                    and dice.__contains__(3)
+                    and dice.__contains__(4)
+                    and dice.__contains__(5)):
                 return 30
             return 0
         case "Large Straight":
-            if len(set(dice)) == 5:
+            if (dice.__contains__(2)
+                    and dice.__contains__(3)
+                    and dice.__contains__(4)
+                    and dice.__contains__(5)
+                    and dice.__contains__(6)):
                 return 40
             return 0
         case "Chance":
             return sum(dice)
         case "Yatzy":
-            if all(d == dice[0] for d in dice):
+            if all(d == dice[0] for d in dice) and dice[0] != 0:
                 return 50
             return 0
         case _:
