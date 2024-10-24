@@ -60,7 +60,7 @@ def get_user_category_decision(player: Player):
     """Get the category the user wants to use, only showing un-scored categories."""
     # Get all un-scored categories
     available_categories = [category for category in categories() if player.scorecard.get(category) is None]
-
+    # This should never happen, should help track down bugs if it does
     if not available_categories:
         raise ValueError("No available categories left to choose from.")
 
