@@ -1,4 +1,4 @@
-def get_selected_dice():
+def get_selected_dice_index():
     """Get user input for dice to hold and convert to list of indices."""
     while True:
         user_input = input("Enter dices to hold (1-5), seperated by spaces: ")
