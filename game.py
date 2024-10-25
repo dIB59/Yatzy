@@ -15,7 +15,7 @@ class YatzyStateMachine:
         self.current_state = self.States.START
         self.players = players
         self.current_round = 0
-        self.max_rounds = len(score.categories()) * len(players)
+        self.max_rounds = len(score.categories()) * len(players) - 1
         self.dice = [0, 0, 0, 0, 0]
         self.re_rolls = 2
 
@@ -155,6 +155,30 @@ class YatzyStateMachine:
     def get_current_player(self) -> Player:
         return self.players[self.current_round % len(self.players)]
 
+    def handle_game_over_state(self):
+        self.print_current_state()
+        self.print_scorecard_as_table()
+
+        # Find the top 3 players if possible
+        # Sort the players by their total score
+        sorted_players = sorted(self.players,
+                                key=lambda players: sum(filter(None, players.scorecard.values())),
+                                reverse=True)
+
+        top_num_players = min(3, len(sorted_players))
+
+        print("Game Over!")
+        print(f"Top {top_num_players} players:")
+        print("-" * 40)
+        print(f"| Rank | Player Name         | Total Score |")
+        print("-" * 40)
+
+        for i, player in enumerate(sorted_players[:3]):
+            total_score = sum(filter(None, player.scorecard.values()))
+            print(f"| {i + 1:<4} | {player.name:20} | {total_score:^10} |")
+
+        print("-" * 40)
+
     def play(self):
         while True:
             match self.current_state:
@@ -167,5 +191,6 @@ class YatzyStateMachine:
                 case YatzyStateMachine.States.END_TURN:
                     self.current_state = self.handle_end_turn_state()
                 case YatzyStateMachine.States.GAME_OVER:
-                    self.print_scorecard_as_table()
+                    self.handle_game_over_state()
+
                     break
