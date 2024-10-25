@@ -1,5 +1,4 @@
 import random
-from dataclasses import dataclass
 from enum import Enum, auto
 
 import input
@@ -8,7 +7,6 @@ from player import Player
 from score import calculate_score
 
 
-@dataclass
 class YatzyStateMachine:
 
     def __init__(self, players: list[Player]):
