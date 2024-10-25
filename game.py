@@ -127,15 +127,20 @@ class YatzyStateMachine:
         # print table for the current player
         print(f"{'Category':<20} {current_player.name}'s {'possible Score':<10}")
         print("-" * (38 + len(current_player.name)))
+
         for category, value in possible_scores.items():
             print(f"{category:<20} {value:<10}")
+        print()
 
     def roll_dice(self, held_dice: list[int] = None):
         new_dice = []
+
         if held_dice is None:
             held_dice = []
+
         for i in range(len(self.dice) - len(held_dice)):
             new_dice.append(random.randint(1, 6))
+
         held_dice.extend(new_dice)
         return held_dice
 
@@ -143,11 +148,8 @@ class YatzyStateMachine:
         self.print_current_state()
         current_player = self.get_current_player()
         chosen_category = input.get_user_category_decision(current_player)
-
         chosen_score = calculate_score(chosen_category, self.dice)
-
         current_player.scorecard[chosen_category] = chosen_score
-
         return YatzyStateMachine.States.END_TURN
 
     def get_current_player(self) -> Player:
