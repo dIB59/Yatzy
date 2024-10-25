@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 import input
+import score
 from player import Player
 from score import calculate_score
 
@@ -10,11 +11,11 @@ from score import calculate_score
 @dataclass
 class YatzyStateMachine:
 
-    def __init__(self, players: list[Player], max_rounds: int):
+    def __init__(self, players: list[Player]):
         self.current_state = self.States.START
         self.players = players
         self.current_round = 0
-        self.max_rounds = max_rounds * len(players)
+        self.max_rounds = len(score.categories()) * len(players)
         self.dice = [0, 0, 0, 0, 0]
         self.re_rolls = 2
 

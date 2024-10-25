@@ -12,7 +12,7 @@ def main():
         player = Player(player_name)
         player_list.append(player)
 
-    yatzy_game = YatzyStateMachine(players=player_list, max_rounds=13)
+    yatzy_game = YatzyStateMachine(players=player_list)
 
     yatzy_game.play()
 
