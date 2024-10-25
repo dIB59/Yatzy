@@ -121,13 +121,17 @@ class YatzyStateMachine:
     def print_score_for_current_roll(self):
         """Prints the current player's score for all categories the current roll."""
         current_player = self.get_current_player()
-        possible_scores = {category: calculate_score(category, self.dice) for category in
-                           current_player.scorecard.keys()}  # improve this stupid shit, send the dict as an argument
+        # only prints the score which can be chosen
+        possible_scores = {
+            category: calculate_score(category, self.dice) if value is None else "-"
+            for category, value in current_player.scorecard.items()
+        }
+        # improve this stupid shit, send the dict as an argument
         # print table for the current player
         print(f"{'Category':<20} {current_player.name}'s {'possible Score':<10}")
         print("-" * (38 + len(current_player.name)))
-        for category, score in possible_scores.items():
-            print(f"{category:<20} {score:<10}")
+        for category, value in possible_scores.items():
+            print(f"{category:<20} {value:<10}")
 
     def roll_dice(self, held_dice: list[int] = None):
         new_dice = []
