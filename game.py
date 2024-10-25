@@ -77,7 +77,6 @@ class YatzyStateMachine:
 
         # Allow up to re_rolls times to hold and roll dice
         for i in range(self.re_rolls):
-            print(i)
             self.dice = self.roll_dice(held_dice)
             self.dice.sort()
             print(f"{current_player.name} rolled: {self.dice}")
@@ -147,9 +146,9 @@ class YatzyStateMachine:
         current_player = self.get_current_player()
         chosen_category = input.get_user_category_decision(current_player)
 
-        score = calculate_score(chosen_category, self.dice)
+        chosen_score = calculate_score(chosen_category, self.dice)
 
-        current_player.scorecard[chosen_category] = score
+        current_player.scorecard[chosen_category] = chosen_score
 
         return YatzyStateMachine.States.END_TURN
 
