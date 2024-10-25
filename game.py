@@ -192,5 +192,4 @@ class YatzyStateMachine:
                     self.current_state = self.handle_end_turn_state()
                 case YatzyStateMachine.States.GAME_OVER:
                     self.handle_game_over_state()
-
                     break
